@@ -1,0 +1,20 @@
+[
+  {
+    "case": "Invalid Username",
+    "username": "wronguser",
+    "password": "password123",
+    "expectedError": "Invalid credentials"
+  },
+  {
+    "case": "Invalid Password",
+    "username": "admin",
+    "password": "wrongpassword",
+    "expectedError": "Invalid credentials"
+  },
+  {
+    "case": "Empty Credentials",
+    "username": "",
+    "password": "",
+    "expectedError": "Username is required"
+  }
+]
