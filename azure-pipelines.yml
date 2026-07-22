@@ -1,0 +1,50 @@
+trigger:
+- main
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '18.x'
+  displayName: 'Install Node.js'
+
+- script: |
+    npm ci
+  displayName: 'Install dependencies'
+
+- script: |
+    npx playwright install --with-deps
+  displayName: 'Install Playwright browsers'
+
+- script: |
+    npm test
+  displayName: 'Run Playwright tests'
+  continueOnError: true # Continue even if tests fail to publish results
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: 'reports/junit/results.xml'
+    searchFolder: '$(System.DefaultWorkingDirectory)'
+    testRunTitle: 'Playwright Test Results'
+  displayName: 'Publish Test Results'
+  condition: succeededOrFailed()
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'reports/html'
+    ArtifactName: 'PlaywrightHTMLReport'
+    publishLocation: 'Container'
+  displayName: 'Publish HTML Report'
+  condition: succeededOrFailed()
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'allure-results'
+    ArtifactName: 'AllureReportData'
+    publishLocation: 'Container'
+  displayName: 'Publish Allure Report Data'
+  condition: succeededOrFailed()
