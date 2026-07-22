@@ -1,0 +1,15 @@
+
+version: '3.8'
+services:
+  playwright:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      # Mount the reports and test results directories to the host
+      - ./reports:/app/reports
+      - ./test-results:/app/test-results
+      - ./screenshots:/app/screenshots
+      - ./videos:/app/videos
+    # Command to run tests, can be overridden
+    command: npx playwright test
