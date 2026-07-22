@@ -1,0 +1,39 @@
+trigger:
+- main
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '18.x'
+  displayName: 'Install Node.js'
+
+- script: |
+    npm ci
+  displayName: 'Install dependencies'
+
+- script: |
+    npx playwright install --with-deps
+  displayName: 'Install Playwright Browsers'
+
+- script: |
+    npm test
+  displayName: 'Run Playwright tests'
+  continueOnError: true # So the 'Publish Test Results' task can run
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: 'reports/junit/test-results.xml'
+    testRunTitle: 'Playwright Test Results'
+  condition: succeededOrFailed()
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'playwright-report'
+    ArtifactName: 'PlaywrightReport'
+    publishLocation: 'Container'
+  condition: succeededOrFailed()

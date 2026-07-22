@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  playwright:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      # Mounts the current directory into the container to reflect code changes
+      # and to get the test reports back on the host machine.
+      - .:/app
+    # Overrides the default command from the Dockerfile if needed
+    command: ["npm", "test"]
